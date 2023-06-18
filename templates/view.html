@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'main.css')}}">
+    <title>Blog</title>
+</head>
+
+<body>
+
+    <div class="parent-div">
+
+        <div class="header-div">
+            <h3 style="display: inline-block;margin-left: 20px; user-select: none;">Bloggy</h3>
+            <div class="user-profile"> 
+                {{user.name}} &nbsp;
+                <img src="{{url_for('static',filename='user.png')}}" height="40px" width="40px" style="display: inline-block;"><br>
+                <div class="dropdown-content">
+                    <a href="#">My activity</a>
+                    <a href="#" onclick="document.getElementById('modal').style.display= 'block'">New Blog</a>
+                    <a href="#">Profile</a>
+                    <a href="/logout/">Log out</a>
+                   
+                    
+                  </div>
+            </div>
+
+        </div>
+
+        <div class="body-div" style="overflow-y: auto;">
+            <div class="blogs">
+                {%for i in data%}
+                <div class="blog-display">
+                    <div class="blog-head" style="text-align: justify;">
+                        <strong>{{i.title}}</strong>&nbsp;&nbsp;
+                        -{{i.created_at.strftime('%d %b %Y')}}
+                        {% if i.user_blog.id == user.id %}
+                            <!-- <button type="button" style="float: right;margin-right: 13px;" onclick="">Edit</button> -->
+                            <input type="button" value="Edit" style="float: right;margin-right: 13px;" onclick="document.getElementById('{{i.id}}').style.display = 'block' ">
+
+                        {% endif %}
+                        <hr style="width: 80%; margin-right: 23%;">
+                     </div>
+
+                    <div class="blog-content-image" style="margin-top: 60px;">
+
+                        <p>{{i.content}}</p>
+                    </div>
+                    
+                    <div class="blog-bottom">
+                        <hr style="width: 100%; margin-right: 23%;">
+                        <h3 style="display: inline-block;" id="author">-by {{i.user_blog.name}}</h3>
+                        
+                        <a href="/like/{{i.id}}" style="display: inline-block; float:right; text-decoration: none;">👍</a>
+                        <h3 style="display: inline-block; float:right;">{{i.like_count}}</h3>
+                    </div>
+
+                </div><br>
+                
+            <div class="modal" id="{{i.id}}">
+
+                <div class="modal-content">
+
+                    <div style="margin-left: 15%;height:10%; width: 100%;">
+                        <H2 style="display: inline-block;">Edit Blog</H2>
+                        <button onclick="document.getElementById('{{i.id}}').style.display= 'none'"
+                            style="margin-left: 25%;display: inline-block;">X</button>
+                    </div>
+
+                    <div style="margin-top: 15%;margin: 30px;">
+                        <form action='/editblog/{{i.id}}' method="POST">
+                            <input type="text" name="title" id="" placeholder="Title..." value = "{{i.title}}" required><br>
+                            
+
+                            <textarea id="content" name="content" rows="10" cols="58" placeholder="Content.." >{{i.content}}</textarea><br>
+
+                            
+                            <input type="submit" value = "Update Blog">
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+                {%endfor%}
+                
+            </div>
+            
+            <div class="modal" id="modal">
+
+                <div class="modal-content">
+
+                    <div style="margin-left: 15%;height:10%; width: 100%;">
+                        <H2 style="display: inline-block;">Create New Blog</H2>
+                        <button onclick="document.getElementById('modal').style.display= 'none'"
+                            style="margin-left: 25%;display: inline-block;">X</button>
+                    </div>
+
+                    <div style="margin-top: 15%;margin: 30px;">
+                        <form action='/newblog/' method="POST">
+                            <input type="text" name="title" id="" placeholder="Title..." required><br>
+                            
+
+                            <textarea id="content" name="content" rows="10" cols="58" placeholder="Content.."></textarea><br>
+
+                            
+                            <input type="submit" value = "Post Blog">
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+<script>
+    function getAutoMargin(name){
+        const margin = 350-(name.length*12);
+        document.getElementById('author').style.marginLeft = margin.toString()+"px";
+        document.getElementById('author').innerHTML="-by "+name
+
+}
+
+</script>
+
+</body>
+
+</html>
